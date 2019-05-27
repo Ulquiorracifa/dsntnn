@@ -10,6 +10,7 @@ import cv2
 import os
 import numpy as np
 import logging
+import platform
 
 image_size = [800, 400]
 train_path = "/home/asprohy/data/traffic"
@@ -24,7 +25,7 @@ train_path = "/home/asprohy/data/traffic"
 logging.basicConfig(filename='fastrcnnTraf25.log',level=logging.DEBUG)
 train_data,_,_ = traf_data.get_data2("/home/asprohy/data/traffic")
 datatype = 'traf'
-model_PATH = 'traf_dsntnn25.pt'
+model_PATH = 'traf_dsntnn27.pt'
 
 # data = train_data
 # img_all = []
@@ -103,26 +104,26 @@ label_all = []
 #
 # #single train
 
-img = cv2.imread(os.path.join(train_path, train_data[5]['filepath']))
+img = cv2.imread(os.path.join(train_path, train_data[0]['filepath']))
 h, w = img.shape[:2]
 print('h[],w[]', h, w)
-print('filepath',train_data[5]['filepath'])
+print('filepath',train_data[0]['filepath'])
 # print(img)
 img = cv2.resize(img, (image_size[0],image_size[1]))
 img = np.array(img)
-tmpc = train_data[5]['bboxes'][0]
+tmpc = train_data[0]['bboxes'][0]
 print('lab', tmpc)
 label_all = [int((tmpc['x1'] + tmpc['x2'])/2 / w * image_size[0]),int((tmpc['y1'] + tmpc['y2'])/2 / h * image_size[1])]
 print('lab', label_all)
 raccoon_face_tensor = torch.from_numpy(img).permute(2, 0, 1).float()
 input_tensor = raccoon_face_tensor.div(255).unsqueeze(0)
-input_var = Variable(input_tensor, requires_grad=False)
+input_var = input_tensor.cuda()
 
 eye_coords_tensor = torch.Tensor([[label_all]])
 target_tensor = (eye_coords_tensor * 2 + 1) / torch.Tensor(image_size) - 1
-target_var = Variable(target_tensor, requires_grad=False)
+target_var = target_tensor.cuda()
 
-model = CoordRegressionNetwork(n_locations=1)
+model = CoordRegressionNetwork(n_locations=1).cuda()
 
 coords, heatmaps = model(input_var)
 
@@ -142,16 +143,16 @@ for i in range(epoch_num):
         h, w = img.shape[:2]
         img = cv2.resize(img, (image_size[0],image_size[1]))
         img = np.array(img)
-        tmpc = train_data[0]['bboxes'][0]
+        tmpc = c['bboxes'][0]
         label_all = [int((tmpc['x1'] + tmpc['x2'])/2 / w * image_size[0]),int((tmpc['y1'] + tmpc['y2'])/2 / h * image_size[1])]
 
         raccoon_face_tensor = torch.from_numpy(img).permute(2, 0, 1).float()
         input_tensor = raccoon_face_tensor.div(255).unsqueeze(0)
-        input_var = Variable(input_tensor, requires_grad=False)
+        input_var = input_tensor.cuda()
 
         eye_coords_tensor = torch.Tensor([[label_all]])
         target_tensor = (eye_coords_tensor * 2 + 1) / torch.Tensor(image_size) - 1
-        target_var = Variable(target_tensor, requires_grad=False)
+        target_var = target_tensor.cuda()
 
         coords, heatmaps = model(input_var)
 
