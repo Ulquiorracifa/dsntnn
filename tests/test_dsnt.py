@@ -3,6 +3,7 @@ from torch.testing import assert_allclose
 
 from dsntnn import dsnt, linear_expectation
 
+
 SIMPLE_INPUT = torch.Tensor([[[
     [0.0, 0.0, 0.0, 0.0, 0.0],
     [0.0, 0.0, 0.0, 0.1, 0.0],

@@ -13,7 +13,10 @@ import logging
 import platform
 
 image_size = [800, 400]
-train_path = "/home/asprohy/data/traffic"
+if platform.system() =='Windows':
+    train_path = "D:\Download\\traf"
+else:
+    train_path = "/home/asprohy/data/traffic"
 # raccoon_face = scipy.misc.imresize(scipy.misc.face()[200:400, 600:800, :], image_size)
 
 # eye_x, eye_y = 24, 26 # label
@@ -22,8 +25,8 @@ train_path = "/home/asprohy/data/traffic"
 # plt.scatter([eye_x], [eye_y], color='red', marker='X')
 # plt.show()
 
-logging.basicConfig(filename='fastrcnnTraf25.log',level=logging.DEBUG)
-train_data,_,_ = traf_data.get_data2("/home/asprohy/data/traffic")
+logging.basicConfig(filename='fastrcnnTraf27.log',level=logging.DEBUG)
+train_data,_,_ = traf_data.get_data2(train_path)
 datatype = 'traf'
 model_PATH = 'traf_dsntnn27.pt'
 
@@ -105,6 +108,7 @@ label_all = []
 # #single train
 
 img = cv2.imread(os.path.join(train_path, train_data[0]['filepath']))
+print(os.path.join(train_path, train_data[0]['filepath']))
 h, w = img.shape[:2]
 print('h[],w[]', h, w)
 print('filepath',train_data[0]['filepath'])
@@ -136,8 +140,8 @@ optimizer = optim.RMSprop(model.parameters(), lr=2.5e-4)
 epoch_num = 10
 
 for i in range(epoch_num):
-    count =0
-    for c in train_data[:]:
+    count =1
+    for c in train_data[:2000]:
         # Forward pass
         img = cv2.imread(os.path.join(train_path, c['filepath']))
         h, w = img.shape[:2]
@@ -159,9 +163,9 @@ for i in range(epoch_num):
         # Per-location euclidean losses
         euc_losses = dsntnn.euclidean_losses(coords, target_var)
         # Per-location regularization losses
-        reg_losses = dsntnn.js_reg_losses(heatmaps, target_var, sigma_t=1.0)
+        reg_losses = dsntnn.js_reg_losses(heatmaps, target_var, sigma_t=1.0).cuda()
         # Combine losses into an overall loss
-        loss = dsntnn.average_loss(euc_losses + reg_losses)
+        loss = dsntnn.average_loss(euc_losses + reg_losses).cuda()
 
         # Calculate gradients
         optimizer.zero_grad()
@@ -177,6 +181,9 @@ for i in range(epoch_num):
         optimizer.step()
 
     if (i+1)%2 ==0:
+        x =model.eval()
+        print(x)
+        logging.info(x)
         torch.save(model, model_PATH)
         logging.info("save model in ",i)
 

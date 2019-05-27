@@ -97,7 +97,10 @@ def get_data2(input_path):
     for data_path in data_paths:
 
         annot_path = os.path.join(input_path, 'Annotations')
-        imgs_path = os.path.join(input_path, 'train_traf')
+        if platform.system() == 'W':
+            imgs_path = os.path.join(input_path, 'Train_fix')
+        else:
+            imgs_path = os.path.join(input_path, 'train_traf')
         imgsets_path_trainval = os.path.join(input_path, 'ImageSets','Main','trainval.txt')
         imgsets_path_test = os.path.join(input_path, 'ImageSets','Main','test.txt')
 
