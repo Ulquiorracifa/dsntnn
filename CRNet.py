@@ -160,6 +160,7 @@ class CoordRegressionNetwork(nn.Module):
         self.hm_conv = nn.Conv2d(16, n_locations, kernel_size=1, bias=False)
 
     def forward(self, images):
+        images = images.cuda()
         # 1. Run the images through our FCN
         fcn_out = self.fcn(images)
         # 2. Use a 1x1 conv to get one unnormalized heatmap per location

@@ -10,7 +10,7 @@ import cv2
 import os
 import numpy as np
 import logging
-
+import platform
 
 image_size = [40, 40]
 raccoon_face = scipy.misc.imresize(scipy.misc.face()[200:400, 600:800, :], image_size)

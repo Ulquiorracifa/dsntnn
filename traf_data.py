@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import cv2
 import xml.etree.ElementTree as ET
+import platform
 
 def get_data(filepath):
     all_imgs = {}
@@ -85,15 +86,18 @@ def get_data2(input_path):
 
     data_paths = [os.path.join(input_path,s) for s in ['VOC2012']]#'VOC2007',
 
-    datapath = '/home/asprohy/data/traffic/train_trfc'
-    label_path = "/home/asprohy/data/traffic/train_label_fix.csv"
+    if platform.system() =='Windows':
+        label_path = 'D:\Download\\train_label_fix.csv'
+    else:
+        datapath = '/home/asprohy/data/traffic/train_trfc'
+        label_path = "/home/asprohy/data/traffic/train_label_fix.csv"
     datas = pd.read_csv(label_path).values
     print('Parsing annotation files')
 
     for data_path in data_paths:
 
         annot_path = os.path.join(input_path, 'Annotations')
-        imgs_path = os.path.join(input_path, 'train_trfc')
+        imgs_path = os.path.join(input_path, 'Train_fix')
         imgsets_path_trainval = os.path.join(input_path, 'ImageSets','Main','trainval.txt')
         imgsets_path_test = os.path.join(input_path, 'ImageSets','Main','test.txt')
 
