@@ -64,7 +64,7 @@ def normalized_linspace(length, dtype=None, device=None):
 def soft_argmax(heatmaps):
     values = [normalized_linspace(d, dtype=heatmaps.dtype, device=heatmaps.device)
               for d in heatmaps.size()[2:]]
-    return linear_expectation(heatmaps, values).flip(-1)
+    return linear_expectation(heatmaps, values).t()
 
 
 def dsnt(heatmaps):
