@@ -171,3 +171,37 @@ class CoordRegressionNetwork(nn.Module):
         coords = dsntnn.dsnt(heatmaps)
 
         return coords, heatmaps
+#
+# import traf_data
+# import os
+# import cv2
+# import numpy as np
+# import torch
+# from tensorboardX import SummaryWriter
+#
+# image_size = [800, 400]
+#
+# train_path = "/home/asprohy/data/traffic"
+# train_data,_,_ = traf_data.get_data2(train_path)
+#
+# img = cv2.imread(os.path.join(train_path, train_data[0]['filepath']))
+# print(os.path.join(train_path, train_data[0]['filepath']))
+# h, w = img.shape[:2]
+# print('h[],w[]', h, w)
+# print('filepath',train_data[0]['filepath'])
+# # print(img)
+# img = cv2.resize(img, (image_size[0],image_size[1]))
+# img = np.array(img)
+# tmpc = train_data[0]['bboxes'][0]
+# print('lab', tmpc)
+# label_all = [int((tmpc['x1'] + tmpc['x2'])/2 / w * image_size[0]),int((tmpc['y1'] + tmpc['y2'])/2 / h * image_size[1])]
+# print('lab', label_all)
+# raccoon_face_tensor = torch.from_numpy(img).permute(2, 0, 1).float()
+# input_tensor = raccoon_face_tensor.div(255).unsqueeze(0)
+# input_var = input_tensor
+#
+# model = CoordRegressionNetwork(n_locations=1)
+#
+# with SummaryWriter(comment='Net1')as w:
+#
+#     w.add_graph(model, (input_var,))
