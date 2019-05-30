@@ -13,7 +13,7 @@ import logging
 import platform
 from tensorboardX import SummaryWriter
 
-image_size = [800, 400]
+image_size = [800, 450]
 if platform.system() =='Windows':
     train_path = "D:\Download\\traf"
 else:
@@ -26,10 +26,10 @@ else:
 # plt.scatter([eye_x], [eye_y], color='red', marker='X')
 # plt.show()
 
-logging.basicConfig(filename='fastrcnnTraf28.log',level=logging.DEBUG)
+logging.basicConfig(filename='fastrcnnTraf29.log',level=logging.DEBUG)
 train_data,_,_ = traf_data.get_data2(train_path)
 datatype = 'traf'
-model_PATH = 'traf_dsntnn28.pt'
+model_PATH = 'traf_dsntnn29.pt'
 
 # data = train_data
 # img_all = []
@@ -124,6 +124,8 @@ raccoon_face_tensor = torch.from_numpy(img).permute(2, 0, 1).float()
 input_tensor = raccoon_face_tensor.div(255).unsqueeze(0)
 input_var = input_tensor.cuda()
 
+
+print("label_all:",label_all)
 eye_coords_tensor = torch.Tensor([[label_all]])
 target_tensor = (eye_coords_tensor * 2 + 1) / torch.Tensor(image_size) - 1
 target_var = target_tensor.cuda()
@@ -138,11 +140,11 @@ plt.scatter([label_all[0]], [label_all[1]], color='red', marker='X')
 plt.show()
 
 optimizer = optim.RMSprop(model.parameters(), lr=2.5e-4)
-epoch_num = 20
+epoch_num = 40
 
 for i in range(epoch_num):
     count =1
-    for c in train_data[:10000]:
+    for c in train_data[:]:
         # Forward pass
         img = cv2.imread(os.path.join(train_path, c['filepath']))
         h, w = img.shape[:2]
@@ -154,6 +156,7 @@ for i in range(epoch_num):
         raccoon_face_tensor = torch.from_numpy(img).permute(2, 0, 1).float()
         input_tensor = raccoon_face_tensor.div(255).unsqueeze(0)
         input_var = input_tensor.cuda()
+
 
         eye_coords_tensor = torch.Tensor([[label_all]])
         target_tensor = (eye_coords_tensor * 2 + 1) / torch.Tensor(image_size) - 1
