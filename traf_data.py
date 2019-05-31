@@ -200,3 +200,18 @@ def get_value(filepath):
     return all_imgs
 
 
+def get_test_data():
+    filepath = "/home/asprohy/data/traffic/submit_sample_fix.csv"
+    datas = pd.read_csv(filepath).values
+    return datas
+
+def get_testlocal_data(filepath):
+    datas = pd.read_csv(filepath).values
+    return datas
+#
+if __name__ == '__main__':
+    label_path = "/home/asprohy/data/traffic/train_label_fix.csv"
+    datas = pd.read_csv(label_path).values
+    print(np.mean(datas[:,5]-datas[:,1]))
+    print(np.mean(datas[:,6]-datas[:,2]))
+

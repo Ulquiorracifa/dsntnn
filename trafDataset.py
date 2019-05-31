@@ -2,6 +2,7 @@ import torch.utils.data
 import traf_data
 from PIL import Image
 import cv2
+import os
 
 class MyDataset(torch.utils.data.Dataset):
     def __init__(self,train_path, transform=None, target_transform=None):
@@ -31,6 +32,41 @@ class MyDataset(torch.utils.data.Dataset):
         if self.transform is not None:
             img = self.transform(img) #是否进行transform
         return img, label-1
+
+    def __len__(self): #这个函数也必须要写，它返回的是数据集的长度，也就是多少张图片，要和loader的长度作区分
+        return len(self.imgs)
+
+
+class MtestDataset(torch.utils.data.Dataset):
+    def __init__(self,train_path, transform=None, target_transform=None):
+        super(MtestDataset,self).__init__()
+        data= traf_data.get_testlocal_data(train_path)
+        imgs = []
+        for c in data:
+            # print(c)
+            c1 = c[0]
+            c3 = c[1]
+            c4 = c[2]
+            # imgs.append((c['filepath'], int(c['bboxes'][0]['class']), int((c['bboxes'][0]['x1']+c['bboxes'][0]['x2'])/2), int((c['bboxes'][0]['y1']+c['bboxes'][0]['y2'])/2)))
+            imgs.append((c1, c3, c4))
+
+        self.imgs = imgs
+        self.transform = transform
+        self.target_transform = target_transform
+
+    def __getitem__(self, index):
+        fn, xmid, ymid= self.imgs[index]
+        testPath = "/home/asprohy/data/traffic/test_data"
+        img = Image.open(os.path.join(testPath,fn))
+        xmid = int(4*xmid)
+        ymid = int(4*ymid)
+        io = (xmid-26, ymid-26, xmid+26, ymid+26)
+        img = img.crop(io)
+        img = img.convert('RGB')
+
+        if self.transform is not None:
+            img = self.transform(img) #是否进行transform
+        return img, fn, xmid, ymid
 
     def __len__(self): #这个函数也必须要写，它返回的是数据集的长度，也就是多少张图片，要和loader的长度作区分
         return len(self.imgs)
